@@ -20,6 +20,15 @@ variable "tenant_id" {
   type        = string
 }
 
+variable "resource_group_name" {
+  description = "The name of the resource group."
+  type        = string
+}
+
+variable "location" {
+  description = "The Azure location where resources will be created."
+  type        = string
+}
 variable "vm_name" {
   description = "Name of the virtual machine"
   type        = string
