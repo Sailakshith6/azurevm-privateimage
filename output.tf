@@ -16,7 +16,7 @@ output "vm_os_disk_id" {
 output "public_ip_address" {
   description = "The public IP address of the virtual machine (if applicable)."
   value       = azurerm_public_ip.example.ip_address
-  condition   = length(azurerm_public_ip.example.ip_address) > 0
+  
 }
 
 output "private_ip_address" {
