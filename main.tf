@@ -1,6 +1,9 @@
+# main.tf
 provider "azurerm" {
   features {}
-subscription_id = var.subscription_id
+
+  # Required properties for Azure authentication
+  subscription_id = var.subscription_id
   client_id       = var.client_id
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
@@ -11,48 +14,34 @@ resource "azurerm_resource_group" "example" {
   location = "West US"
 }
 
-resource "azurerm_virtual_network" "example" {
-  name                = "example-vnet"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.example.location
+resource "azurerm_image" "example" {
+  name                = var.image_name
   resource_group_name = azurerm_resource_group.example.name
-}
-
-resource "azurerm_subnet" "example" {
-  name                 = "example-subnet"
-  resource_group_name  = azurerm_resource_group.example.name
-  virtual_network_name = azurerm_virtual_network.example.name
-  address_prefixes     = ["10.0.1.0/24"]
-}
-
-resource "azurerm_network_interface" "example" {
-  name                = "example-nic"
   location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
 
-  ip_configuration {
-    name                          = "example-ip-config"
-    subnet_id                     = azurerm_subnet.example.id
-    private_ip_address_allocation = "Dynamic"
+  storage_profile {
+    os_disk {
+      os_type           = "Linux"
+      os_state         = "Generalized"
+      managed_disk_type = "Premium_LRS"
+    }
   }
+
+  # Additional configurations for the image can be added here
 }
 
 resource "azurerm_virtual_machine" "example" {
-  name                  = "aostemplate"
+  name                  = var.vm_name
   location              = azurerm_resource_group.example.location
   resource_group_name   = azurerm_resource_group.example.name
   network_interface_ids = [azurerm_network_interface.example.id]
-  vm_size              = var.vm_size
+  vm_size               = var.vm_size
 
   storage_os_disk {
-    name              = "aostemplate_OsDisk_1_fa301d9a8c0747eabc16845b42f8aa15"
+    name              = "${var.vm_name}-osdisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
-  }
-
-  storage_image_reference {
-    id = var.image_id
   }
 
   os_profile {
@@ -64,4 +53,9 @@ resource "azurerm_virtual_machine" "example" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
+
+  # Use the image_id variable for the source image
+  source_image_id = var.image_id
 }
+
+# Add other necessary resources, such as network interfaces and security groups, as needed.
