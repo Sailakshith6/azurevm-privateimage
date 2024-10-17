@@ -37,7 +37,10 @@ variable "image_name" {
   type        = string
   default     = "aostemplate-image-20241017194443"
 }
-
+variable "image_id" {
+  description = "The ID of the private image to use for the virtual machine"
+  type        = string
+}
 variable "admin_username" {
   description = "Admin username for the virtual machine"
   type        = string
