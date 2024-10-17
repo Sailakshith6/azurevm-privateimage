@@ -8,10 +8,7 @@ output "subnet_id" {
   value       = azurerm_subnet.example.id
 }
 
-output "vm_os_disk_id" {
-  description = "The ID of the OS disk of the virtual machine."
-  value       = azurerm_virtual_machine.example.storage_os_disk[0].id
-}
+
 
 output "public_ip_address" {
   description = "The public IP address of the virtual machine (if applicable)."
