@@ -1,30 +1,51 @@
+# variables.tf
+variable "subscription_id" {
+  description = "Azure Subscription ID"
+  type        = string
+}
+
+variable "client_id" {
+  description = "Azure Client ID (Service Principal)"
+  type        = string
+}
+
+variable "client_secret" {
+  description = "Azure Client Secret (Service Principal)"
+  type        = string
+  sensitive   = true
+}
+
+variable "tenant_id" {
+  description = "Azure Tenant ID"
+  type        = string
+}
+
 variable "vm_name" {
-  description = "The name of the virtual machine."
+  description = "Name of the virtual machine"
   type        = string
   default     = "aostemplate"
 }
 
 variable "vm_size" {
-  description = "The size of the virtual machine."
+  description = "Size of the virtual machine"
   type        = string
   default     = "Standard_B1ls"
 }
 
-variable "image_id" {
-  description = "The resource ID of the private image."
+variable "image_name" {
+  description = "Name of the private image"
   type        = string
-  default     = "/subscriptions/680607b4-c642-4df6-856f-c593fe9c6a6c/resourceGroups/aostemplate_group/providers/Microsoft.Compute/images/aostemplate-image-20241017194443"
+  default     = "aostemplate-image-20241017194443"
 }
 
 variable "admin_username" {
-  description = "The admin username for the virtual machine."
+  description = "Admin username for the virtual machine"
   type        = string
   default     = "adminuser"
 }
 
 variable "admin_password" {
-  description = "The admin password for the virtual machine."
+  description = "Admin password for the virtual machine"
   type        = string
   sensitive   = true
-  default     = "P@ssword1234" # Use secure methods to handle passwords in production.
 }
