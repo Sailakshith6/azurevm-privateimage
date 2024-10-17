@@ -38,19 +38,6 @@ resource "azurerm_network_interface" "example" {
   }
 }
 
-resource "azurerm_image" "example" {
-  name                          = var.image_name
-  resource_group_name           = azurerm_resource_group.example.name
-  location                      = azurerm_resource_group.example.location
-  source_virtual_machine_id     = var.source_vm_id
-
-  os_disk {
-    os_type           = "Linux"
-    os_state         = "Generalized"
-    managed_disk_type = "Premium_LRS"
-  }
-}
-
 resource "azurerm_virtual_machine" "example" {
   name                  = var.vm_name
   location              = azurerm_resource_group.example.location
@@ -75,5 +62,6 @@ resource "azurerm_virtual_machine" "example" {
     disable_password_authentication = false
   }
 
+  # Use this to reference the private image ID
   source_image_id = var.image_id
 }
