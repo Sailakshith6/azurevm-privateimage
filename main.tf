@@ -1,7 +1,5 @@
-# main.tf
 provider "azurerm" {
   features {}
-
   # Required properties for Azure authentication
   subscription_id = var.subscription_id
   client_id       = var.client_id
@@ -10,24 +8,47 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "example" {
-  name     = "aostemplate_group"
-  location = "West US"
+  name     = var.resource_group_name
+  location = var.location
+}
+
+resource "azurerm_virtual_network" "example" {
+  name                = "${var.vm_name}-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+}
+
+resource "azurerm_subnet" "example" {
+  name                 = "${var.vm_name}-subnet"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_network_interface" "example" {
+  name                = "${var.vm_name}-nic"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.example.id
+    private_ip_address_allocation = "Dynamic"
+  }
 }
 
 resource "azurerm_image" "example" {
-  name                = var.image_name
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
+  name                          = var.image_name
+  resource_group_name           = azurerm_resource_group.example.name
+  location                      = azurerm_resource_group.example.location
+  source_virtual_machine_id     = var.source_vm_id
 
-  storage_profile {
-    os_disk {
-      os_type           = "Linux"
-      os_state         = "Generalized"
-      managed_disk_type = "Premium_LRS"
-    }
+  os_disk {
+    os_type           = "Linux"
+    os_state         = "Generalized"
+    managed_disk_type = "Premium_LRS"
   }
-
-  # Additional configurations for the image can be added here
 }
 
 resource "azurerm_virtual_machine" "example" {
@@ -54,8 +75,5 @@ resource "azurerm_virtual_machine" "example" {
     disable_password_authentication = false
   }
 
-  # Use the image_id variable for the source image
   source_image_id = var.image_id
 }
-
-# Add other necessary resources, such as network interfaces and security groups, as needed.
