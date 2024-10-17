@@ -48,7 +48,7 @@ resource "azurerm_virtual_machine" "example" {
   storage_os_disk {
     name              = "${var.vm_name}-osdisk"
     caching           = "ReadWrite"
-    create_option     = "FromImage"
+    create_option     = "FromImage"  # This is correct as we are creating from an image
     managed_disk_type = "Premium_LRS"
   }
 
@@ -62,6 +62,8 @@ resource "azurerm_virtual_machine" "example" {
     disable_password_authentication = false
   }
 
-  # Use this to reference the private image ID
-  source_image_id = var.image_id
+  # Use the storage_image_reference block to set the image ID
+  storage_image_reference {
+    id = var.image_id  # Use the variable here
+  }
 }
